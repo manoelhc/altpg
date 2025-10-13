@@ -1,0 +1,43 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "altpg"
+version = "0.1.0"
+description = "PostgreSQL Python driver alternative to psycopg, written in Rust"
+authors = [
+    {name = "Manoel Carvalho"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Rust",
+    "Topic :: Database",
+]
+keywords = ["postgresql", "database", "psycopg", "rust", "pyo3"]
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+python-source = "python"
+module-name = "altpg._altpg"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio",
+    "sqlalchemy>=2.0",
+]
+
+[project.entry-points."sqlalchemy.dialects"]
+"postgresql.altpg" = "altpg.sqlalchemy:AltpgDialect"
