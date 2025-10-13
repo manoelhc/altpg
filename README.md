@@ -1,5 +1,10 @@
 # altpg
 
+[![CI](https://github.com/manoelhc/altpg/workflows/CI/badge.svg)](https://github.com/manoelhc/altpg/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Rust](https://img.shields.io/badge/rust-1.65+-orange.svg)](https://www.rust-lang.org/)
+
 PostgreSQL Python driver alternative to psycopg, written in Rust with PyO3.
 
 ## Overview

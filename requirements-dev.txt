@@ -1,0 +1,22 @@
+# Development dependencies for altpg
+
+# Build tools
+maturin>=1.0,<2.0
+
+# Testing
+pytest>=7.0
+pytest-cov>=4.0
+pytest-asyncio>=0.21
+
+# ORM/Database libraries for testing
+sqlalchemy>=2.0
+
+# Code quality (optional)
+black>=23.0
+flake8>=6.0
+mypy>=1.0
+ruff>=0.1.0
+
+# Documentation (optional)
+sphinx>=7.0
+sphinx-rtd-theme>=1.3
