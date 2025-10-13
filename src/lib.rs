@@ -1,7 +1,7 @@
-use pyo3::prelude::*;
-use pyo3::exceptions::PyException;
-use pyo3::types::PyTuple;
 use postgres::{Client, NoTls};
+use pyo3::exceptions::PyException;
+use pyo3::prelude::*;
+use pyo3::types::PyTuple;
 use std::sync::{Arc, Mutex};
 
 // Custom exception types to match psycopg2
@@ -32,10 +32,12 @@ impl Connection {
     fn commit(&self) -> PyResult<()> {
         let mut client_guard = self.client.lock().unwrap();
         if let Some(client) = client_guard.as_mut() {
-            client.execute("COMMIT", &[])
+            client
+                .execute("COMMIT", &[])
                 .map_err(|e| OperationalError::new_err(format!("Commit failed: {}", e)))?;
             // Start a new transaction
-            client.execute("BEGIN", &[])
+            client
+                .execute("BEGIN", &[])
                 .map_err(|e| OperationalError::new_err(format!("Begin failed: {}", e)))?;
             Ok(())
         } else {
@@ -46,10 +48,12 @@ impl Connection {
     fn rollback(&self) -> PyResult<()> {
         let mut client_guard = self.client.lock().unwrap();
         if let Some(client) = client_guard.as_mut() {
-            client.execute("ROLLBACK", &[])
+            client
+                .execute("ROLLBACK", &[])
                 .map_err(|e| OperationalError::new_err(format!("Rollback failed: {}", e)))?;
             // Start a new transaction
-            client.execute("BEGIN", &[])
+            client
+                .execute("BEGIN", &[])
                 .map_err(|e| OperationalError::new_err(format!("Begin failed: {}", e)))?;
             Ok(())
         } else {
@@ -104,7 +108,7 @@ impl Cursor {
     #[pyo3(signature = (query, params=None))]
     fn execute(&mut self, query: &str, params: Option<&Bound<PyTuple>>) -> PyResult<()> {
         let mut client_guard = self.connection.lock().unwrap();
-        
+
         if let Some(client) = client_guard.as_mut() {
             // Convert Python parameters to Rust parameters
             let pg_params: Vec<String> = if let Some(p) = params {
@@ -143,7 +147,10 @@ impl Cursor {
                     self.rowcount = count as i64;
                     Ok(())
                 }
-                Err(e) => Err(ProgrammingError::new_err(format!("Query execution failed: {}", e))),
+                Err(e) => Err(ProgrammingError::new_err(format!(
+                    "Query execution failed: {}",
+                    e
+                ))),
             }
         } else {
             Err(InterfaceError::new_err("Connection is closed"))
@@ -152,7 +159,7 @@ impl Cursor {
 
     fn fetchone(&mut self, _py: Python) -> PyResult<Option<PyObject>> {
         let mut client_guard = self.connection.lock().unwrap();
-        
+
         if let Some(_client) = client_guard.as_mut() {
             // For this simplified implementation, we return None
             // A full implementation would need to cache query results
@@ -242,7 +249,7 @@ fn connect(
         let user = user.unwrap_or("postgres");
         let password = password.unwrap_or("");
         let dbname = dbname.unwrap_or("postgres");
-        
+
         format!(
             "host={} port={} user={} password={} dbname={}",
             host, port, user, password, dbname
@@ -252,9 +259,10 @@ fn connect(
     match Client::connect(&connection_string, NoTls) {
         Ok(mut client) => {
             // Start a transaction by default
-            client.execute("BEGIN", &[])
-                .map_err(|e| OperationalError::new_err(format!("Failed to start transaction: {}", e)))?;
-            
+            client.execute("BEGIN", &[]).map_err(|e| {
+                OperationalError::new_err(format!("Failed to start transaction: {}", e))
+            })?;
+
             Ok(Connection {
                 client: Arc::new(Mutex::new(Some(client))),
                 autocommit: false,
@@ -292,13 +300,13 @@ fn _altpg(py: Python, m: &Bound<PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(apilevel, m)?)?;
     m.add_function(wrap_pyfunction!(threadsafety, m)?)?;
     m.add_function(wrap_pyfunction!(paramstyle, m)?)?;
-    
+
     // Add exception classes
     m.add("DatabaseError", py.get_type_bound::<DatabaseError>())?;
     m.add("IntegrityError", py.get_type_bound::<IntegrityError>())?;
     m.add("ProgrammingError", py.get_type_bound::<ProgrammingError>())?;
     m.add("OperationalError", py.get_type_bound::<OperationalError>())?;
     m.add("InterfaceError", py.get_type_bound::<InterfaceError>())?;
-    
+
     Ok(())
 }
