@@ -199,13 +199,13 @@ Built with:
 
 ## Roadmap
 
-- [ ] Complete type adapter system
-- [ ] Server-side cursors
+- [x] Complete type adapter system
+- [x] Server-side cursors
 - [ ] COPY operations
 - [ ] Async/await support
 - [ ] NOTIFY/LISTEN support
-- [ ] Connection pooling
+- [x] Connection pooling
 - [ ] Full psycopg2/psycopg3 compatibility
-- [ ] Performance benchmarks
-- [ ] Comprehensive test suite with real PostgreSQL tests
+- [x] Performance benchmarks
+- [x] Comprehensive test suite with real PostgreSQL tests
 
